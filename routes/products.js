@@ -58,81 +58,66 @@ router.get("/api/products/:id", (req, res) => {
   let response;
   Product.find({id: req.params.id}, function (err, docs) {if (err) {console.log('Error Product.find')} }).then(result => {
       if (result.length < 1) {
-        console.log('Product not found in DB')
-        next();
+        console.log('error 404 product not found')
+        res.status(404);
+        res.render('error404');
       } else {
         console.log('Product found in DB :')
         response = result
-        console.log(result)
+        console.log(response)
+        res.json(response);
       }
+    }).catch(err =>{
+      console.log('error')
+      res.status(500);
+      res.render('error404');
     });
-  res.json(response);
 });
 
 router.post("/api/products", (req, res) => {
   let response;
   Product.create(req.body, function(err, product) {
-    if(err) { console.log('Error Product.create'); /* error 400 bad request */ }
-    response = product;
+    if(err) { 
+      console.log(err)
+      res.status(400);
+      res.render('error404'); //bad request
+    }
+    response = JSON.stringify(product);
   });
   res.json(response);
 });
 
 router.delete("/api/products/:id", (req, res) => {
   let response;
-  Product.find({id: req.params.id}, function (err, product) {
-    if (err) {
-      console.log('Error Product.find')} 
-    if (!product){
-      next();//error 404 product not found
-    }
-    product.remove(function(err) {
-      if(err) { console.log('Error Product.remove'); }
-      console.log('Product deleted :')
-      console.log(product)
-      response = 'Product deleted'
+  Product.find({id: req.params.id}, function (err, docs) {if (err) {console.log('Error Product.find')} }).then(result => {
+      if (result.length < 1) {
+        console.log('error 404 product not found')
+        res.status(404);
+        res.render('error404');
+      } else {
+        response = result
+        Product.remove({ id: req.params.id }, function (err) {
+          if (err) {console.log('Error Product.find')}
+        }); 
+        console.log('Product found and deleted in DB :')
+        console.log(response)
+        res.json(response);
+      }
+    }).catch(err =>{
+      console.log('error')
+      res.status(500);
+      res.render('error404');
     });
-  res.json(response);
 });
 
 router.delete("/api/products", (req, res) => {
   let response;
-  Product.find(function (err, product) {
+  Product.remove({}, function (err) {
     if (err) {
-      console.log('Error Product.find')} 
-    product.remove(function(err) {
-      if(err) { console.log('Error Product.remove'); }
-      console.log('Product deleted :')
-      console.log(product)
-      response = 'Product deleted'
-    });
-  res.json(response);
+      console.log('Error')} 
+    response = 'All products deleted';
+    res.json(response);
+  });  
 });
-
-//module.exports = router;
-
-
-
- // var test = new Product({
- //    id: 12346,
- //    name: 'testProduct4',
- //    price: 51,
- //    image: '/assets/img/logo.svg',
- //    category: 'cameras',
- //    description: 'This is a test description.',
- //    features: ['feature1','feature2','feature3']
- //    });
-
- //  Product.find({id: test.id}, function (err, docs) {if (err) {console.log('Error Product.find')} }).then(result => {
- //      if (result.length < 1) {
- //        test.save().then(result => {
- //          console.log('New product save with following id :')
- //          console.log(result._id)
- //        })
- //      } else {
- //        console.log('Product already existing')
- //        console.log(result)
- //      }
- //    });
 
 module.exports = router;
