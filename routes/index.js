@@ -12,9 +12,16 @@ router.get("/accueil", (req, res) => {
 });
 
 /* GET produits page */
-router.get("/produits", (req, res) => {
-  res.render("products", { title: "Produits", message: "Page des produits" });
+router.get('/products', function(req, res) {
+  var mongoose = req.db;
+  var Products = mongoose.model('Product').schema;
+  Products.find({},{},function(e,docs){
+    res.json(docs);
+  });
 });
+/*router.get('/produits', function(req, res) {
+	res.render("products", { title: "Produits", message: "Page des produits" });
+});*/
 
 /* GET produit page */
 /*router.get("/produits/:id", (req, res) => {
