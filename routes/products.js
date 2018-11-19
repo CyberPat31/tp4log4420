@@ -36,7 +36,7 @@ router.get("/", (req, res) => {
     Product.find({category: req.query.category},function (err, docs) {if (err) {console.log('Error Product.find')}}).sort(sort).then(result => {
     if (result.length < 1) {
       console.log('No product in DB')
-      response = '';
+      response = [];
     } else {
       console.log('Product(s) found in DB :')
       response = result
@@ -47,7 +47,7 @@ router.get("/", (req, res) => {
     Product.find(function (err, docs) {if (err) {console.log('Error Product.find')}}).sort(sort).then(result => {
     if (result.length < 1) {
       console.log('No product in DB')
-      response = '';
+      response = [];
     } else {
       console.log('Product(s) found in DB :')
       response = result
@@ -99,13 +99,11 @@ router.delete("/:id", (req, res) => {
         res.status(404);
         res.render('error404',{ title: "OnlineShop - Error 404", message: "Product not found"});
       } else {
-        response = result
         Product.remove({ id: req.params.id }, function (err) {
           if (err) {console.log('Error Product.find')}
         }); 
         console.log('Product found and deleted in DB :')
-        console.log(response)
-        res.json(response);
+        res.json('Product deleted');
       }
     }).catch(err =>{
       console.log('error')
