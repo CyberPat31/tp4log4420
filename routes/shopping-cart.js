@@ -3,7 +3,8 @@ const router = express.Router();
 const mongoose = require('mongoose')
 const session = require("express-session");
 const MongoStore = require('connect-mongo')(session);
-const Order = mongoose.model('Order')
+const Order = mongoose.model('Order');
+const Product = mongoose.model('Product');
 const validator = require('validator');
 
 router.get("/", (req, res) => {
@@ -61,6 +62,13 @@ router.post("/", (req, res) => {
 	){
 		isUpdateValid = true;
 	}
+	var isProductIdValid = true;
+	Product.find(function (err, docs) {if (err) {console.log('Error Product.find')}}).then(result => {
+		if (result.length < 1) {
+		  isProductIdValid = false;
+		  isUpdateValid = false;
+		}
+		});
 	if(isUpdateValid){
 		if(typeof req.session.cart !== 'undefined'){;
 			var array = [];
@@ -105,9 +113,14 @@ router.post("/", (req, res) => {
 		}
 	}
 	else{
-		  console.log("Bad parameters")
-		  res.status(400);
-		  res.render('error400');
+		if (!isProductIdValid){
+			res.status(400);
+		}
+		else {
+			console.log("Bad parameters")
+			res.status(400);
+			res.render('error400');
+		}
 	}
 });
 
