@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose')
 const Product = mongoose.model('Product')
 
-router.get("/api/products", (req, res) => {
+router.get("/", (req, res) => {
   let response;
   let criteria = 'price-asc';
   let sort;
@@ -54,7 +54,7 @@ router.get("/api/products", (req, res) => {
   res.json(response);
 });
 
-router.get("/api/products/:id", (req, res) => {
+router.get("/:id", (req, res) => {
   let response;
   Product.find({id: req.params.id}, function (err, docs) {if (err) {console.log('Error Product.find')} }).then(result => {
       if (result.length < 1) {
@@ -74,7 +74,7 @@ router.get("/api/products/:id", (req, res) => {
     });
 });
 
-router.post("/api/products", (req, res) => {
+router.post("/", (req, res) => {
   let response;
   Product.create(req.body, function(err, product) {
     if(err) { 
@@ -87,7 +87,7 @@ router.post("/api/products", (req, res) => {
   res.json(response);
 });
 
-router.delete("/api/products/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
   let response;
   Product.find({id: req.params.id}, function (err, docs) {if (err) {console.log('Error Product.find')} }).then(result => {
       if (result.length < 1) {
@@ -110,7 +110,7 @@ router.delete("/api/products/:id", (req, res) => {
     });
 });
 
-router.delete("/api/products", (req, res) => {
+router.delete("/", (req, res) => {
   let response;
   Product.remove({}, function (err) {
     if (err) {

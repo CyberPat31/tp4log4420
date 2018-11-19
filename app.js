@@ -5,9 +5,14 @@ const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const MongoStore = require('connect-mongo')(session);
+const mongoose = require("mongoose");
 
 require("./lib/db");
 const index = require("./routes/index");
+const productsAPI = require("./routes/products");
+const ordersAPI = require("./routes/orders");
+const shoppingCartAPI = require("./routes/shopping-cart");
 
 const app = express();
 
@@ -29,12 +34,16 @@ app.use('/assets', express.static(path.join(__dirname, "public")));
 // initialize the session
 app.use(session({
   secret: 'log4420',
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }
 }));
 
 app.use("/", index);
+app.use("/api/products", productsAPI);
+app.use("/api/orders", ordersAPI);
+app.use("/api/shopping-cart", shoppingCartAPI);
 
 // catch 404 and forward to error handler
 app.use((req, res, next)=> {
