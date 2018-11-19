@@ -62,10 +62,8 @@ router.post("/", (req, res) => {
 	){
 		isUpdateValid = true;
 	}
-	var isProductIdValid = true;
-	Product.find(function (err, docs) {if (err) {console.log('Error Product.find')}}).then(result => {
+	Product.find({id: body.productId}, function (err, docs) {if (err) {console.log('Error Product.find')}}).then(result => {
 		if (result.length < 1) {
-		  isProductIdValid = false;
 		  isUpdateValid = false;
 		}
 		});
@@ -145,6 +143,7 @@ router.put("/:productId", (req, res) => {
 					productFound = true;
 					req.session.cart[i].quantity = req.body.quantity;
 					array.push(req.session.cart[i]);
+					res.status(204);
 				} 
 				else {
 				array.push(req.session.cart[i]);
@@ -152,16 +151,19 @@ router.put("/:productId", (req, res) => {
 			}
 			if (!productFound){
 				req.session.cart = array;
-				res.status(204);
+				res.status(404);
 				req.session.save(function(err){
 					if(err){
 						console.log(' PUT ERROR ', err);
 					}
 				})
 			}
-			else {
-				res.status(404);
-			}
+			req.session.cart = array;
+			req.session.save(function(err){
+					if(err){
+						console.log(' PUT ERROR ', err);
+					}
+				})
 			console.log(req.session.cart);
 			res.json(req.session.cart);
 		}
@@ -169,6 +171,7 @@ router.put("/:productId", (req, res) => {
 			var array = [];
 			array.push(req.body);
 			req.session.cart = array;
+			res.status(404);
 			req.session.save(function(err){
 				if(err){
 					console.log(' PUT ERROR ', err);
@@ -212,6 +215,7 @@ router.delete("/:productId", (req, res) => {
 		res.json(req.session.cart);
     }
 	else{
+		res.status(404);
 		res.json('[]');
     }
 });
