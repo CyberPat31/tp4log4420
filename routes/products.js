@@ -22,12 +22,16 @@ router.get("/", (req, res) => {
       sort = '-name';
       break;
     default:
-      next(); // error 404 wrong criteria
+      console.log('error 400 wrong criteria')
+      res.status(400);
+      res.render('error400', { title: "OnlineShop - Error 400", message: "Bad request"}); // error 400 wrong criteria
   }
 
   if (req.query.category){
     if (['cameras', 'computers', 'consoles', 'screens'].indexOf(req.query.category) < 0) {
-    next(); //error 404 wrong category 
+      console.log('error 400 wrong category')
+      res.status(400);
+      res.render('error400', { title: "OnlineShop - Error 400", message: "Bad request"}); //error 400 wrong category 
     }
     Product.find({category: req.query.category},function (err, docs) {if (err) {console.log('Error Product.find')}}).sort(sort).then(result => {
     if (result.length < 1) {
@@ -60,7 +64,7 @@ router.get("/:id", (req, res) => {
       if (result.length < 1) {
         console.log('error 404 product not found')
         res.status(404);
-        res.render('error404');
+        res.render('error404', { title: "OnlineShop - Error 404", message: "Product not found"});
       } else {
         console.log('Product found in DB :')
         response = result
@@ -70,7 +74,7 @@ router.get("/:id", (req, res) => {
     }).catch(err =>{
       console.log('error')
       res.status(500);
-      res.render('error404');
+      res.render('error404', { title: "OnlineShop - Error 500", message: ""});
     });
 });
 
@@ -80,7 +84,7 @@ router.post("/", (req, res) => {
     if(err) { 
       console.log(err)
       res.status(400);
-      res.render('error404'); //bad request
+      res.render('error404', { title: "OnlineShop - Error 400", message: "Bad request"}); //bad request
     }
     response = JSON.stringify(product);
   });
@@ -93,7 +97,7 @@ router.delete("/:id", (req, res) => {
       if (result.length < 1) {
         console.log('error 404 product not found')
         res.status(404);
-        res.render('error404');
+        res.render('error404',{ title: "OnlineShop - Error 404", message: "Product not found"});
       } else {
         response = result
         Product.remove({ id: req.params.id }, function (err) {
@@ -106,7 +110,7 @@ router.delete("/:id", (req, res) => {
     }).catch(err =>{
       console.log('error')
       res.status(500);
-      res.render('error404');
+      res.render('error404', { title: "OnlineShop - Error 500", message: ""});
     });
 });
 
