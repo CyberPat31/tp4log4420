@@ -1,0 +1,36 @@
+extends layout
+
+block content
+	main
+		article
+			h1 Panier
+			#shopping-cart-container
+				table.table.shopping-cart-table
+					thead
+						tr
+							th
+							th Produit
+							th Prix unitaire
+							th Quantité
+							th Prix
+					tbody
+					- var total = 0
+						each pdt in products
+							tr
+								th
+								th #{pdt.id}
+								th #{pdt.price}
+								th #{pdt.quantity}
+								- var subtotal = pdt.price*pdt.quantity
+								- total = total + subtotal
+								th #{subtotal}
+				p.shopping-cart-total
+					| Total: #{total}
+					strong#total-amount
+				a.btn.pull-right(href='./order.html')
+					| Commander 
+					i.fa.fa-angle-double-right
+				button#remove-all-items-button.btn
+					i.fa.fa-trash-o
+					|   Vider le panier
+		
